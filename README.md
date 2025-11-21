@@ -15,6 +15,18 @@ Aplikasi dibangun menggunakan **Streamlit**.
 
 ---
 
+## 🔗 Google Colab (Training Notebook)
+Model dan preprocessing **dilatih sepenuhnya di Google Colab**:  
+👉 **https://colab.research.google.com/drive/1BxnGwSpRW-6RUOE_y1sR9ALR642IvDOn?usp=sharing**
+
+Silakan buka link di atas untuk melihat:
+- Proses preprocessing
+- Confusion matrix
+- Akurasi asli
+- Pelatihan Random Forest, Logistic Regression, dan Voting Ensemble
+
+---
+
 ## 📊 Dataset
 Dataset berasal dari sumber terbuka seperti Kaggle atau UCI.  
 Dataset disimpan sebagai:
@@ -97,7 +109,7 @@ streamlit run main.py
 ---
 
 ## 📝 Training Ulang Model (di Google Colab)
-Training dilakukan di notebook Colab (bukan train.py).  
+Training dilakukan di notebook Colab.  
 Untuk menyimpan model:
 
 ```python
