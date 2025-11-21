@@ -13,7 +13,10 @@ st.set_page_config(
 )
 
 st.title("🫀 Heart Disease Prediction App")
-st.write("Aplikasi ini memprediksi potensi penyakit jantung menggunakan Ensemble Machine Learning (RandomForest + Logistic Regression).")
+st.write(
+    "Aplikasi ini memprediksi potensi penyakit jantung menggunakan Machine Learning "
+    "(Random Forest, Logistic Regression, dan Voting Ensemble)."
+)
 
 # -----------------------------------------------------------
 # 📌 Load model dan preprocessor
@@ -30,24 +33,32 @@ def load_all():
 rf, lr, voting, preprocessor, df = load_all()
 
 # -----------------------------------------------------------
-# 📌 Sidebar — Akurasi model
+# 📌 Sidebar — Akurasi model (HASIL ASLI COLAB)
 # -----------------------------------------------------------
 st.sidebar.header("📊 Model Performance")
 
-st.sidebar.write("Random Forest Accuracy: **>90%**")
-st.sidebar.write("Logistic Regression Accuracy: **>85%**")
-st.sidebar.write("Voting Ensemble Accuracy: **>90%** ✔")
+st.sidebar.write("**Random Forest Accuracy:** 100.00%")
+st.sidebar.write("**Logistic Regression Accuracy:** 80.98%")
+st.sidebar.write("**Voting Ensemble Accuracy:** 95.61% ✔")
 
-st.sidebar.info("Akurasi aktual dapat berbeda tergantung data training, silakan cek laporan train.py.")
+st.sidebar.info(
+    "Akurasi di atas merupakan hasil aktual dari proses training di Google Colab. "
+    "Performanya dapat sedikit berbeda jika model dilatih ulang."
+)
 
 # -----------------------------------------------------------
 # 📌 Input Form
 # -----------------------------------------------------------
 st.subheader("📝 Input Data Pasien")
 
-target_col = [c for c in df.columns if c.lower() in ("target", "heartdisease", "output")]
+# cari kolom target dari dataset
+target_col = [
+    c for c in df.columns
+    if c.lower() in ("target", "heartdisease", "output", "label")
+]
 target_col = target_col[0] if target_col else df.columns[-1]
 
+# fitur yang digunakan untuk prediksi
 feature_cols = [c for c in df.columns if c != target_col]
 
 user_data = {}
@@ -61,7 +72,7 @@ for col in feature_cols:
         user_data[col] = st.selectbox(col, options)
 
 # -----------------------------------------------------------
-# 📌 Pilih model
+# 📌 Pilih model untuk prediksi
 # -----------------------------------------------------------
 st.subheader("⚙ Pilih Model Prediksi")
 
@@ -75,8 +86,11 @@ model_choice = st.selectbox(
 # -----------------------------------------------------------
 if st.button("🔍 Predict"):
     X_input = pd.DataFrame([user_data])
+
+    # Preprocessing input
     X_transformed = preprocessor.transform(X_input)
 
+    # pilih model
     if model_choice == "Random Forest":
         model = rf
     elif model_choice == "Logistic Regression":
@@ -84,18 +98,19 @@ if st.button("🔍 Predict"):
     else:
         model = voting
 
+    # prediksi
     pred = model.predict(X_transformed)[0]
 
     st.subheader("📢 Hasil Prediksi")
 
     if pred == 1:
-        st.error("💔 **Pasien berpotensi memiliki penyakit jantung.**")
+        st.error("💔 Pasien berpotensi memiliki penyakit jantung.")
     else:
-        st.success("💚 **Pasien tidak memiliki indikasi penyakit jantung.**")
+        st.success("💚 Pasien tidak memiliki indikasi penyakit jantung.")
 
-    # Probabilities if available
+    # probabilitas
     if hasattr(model, "predict_proba"):
         prob = model.predict_proba(X_transformed)[0]
-        st.write(f"**Probabilitas:**")
+        st.write("**Probabilitas:**")
         st.write(f"- Tidak sakit: {prob[0]*100:.2f}%")
         st.write(f"- Sakit: {prob[1]*100:.2f}%")
